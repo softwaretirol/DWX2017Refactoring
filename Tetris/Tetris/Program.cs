@@ -4,43 +4,49 @@ using System.Text;
 
 namespace Tetris
 {
-    internal static class Program
+    internal class Program
     {
-        public static string Sqr = "■";
-        public static int[,] Grid = new int[23, 10];
-        public static int[,] DroppedtetrominoeLocationGrid = new int[23, 10];
-        public static Stopwatch Timer = new Stopwatch();
-        public static Stopwatch DropTimer = new Stopwatch();
-        public static Stopwatch InputTimer = new Stopwatch();
-        public static int DropTime, DropRate = 300;
-        public static bool IsDropped;
-        private static Tetrominoe _tet;
-        private static Tetrominoe _nexttet;
-        public static ConsoleKeyInfo Key;
-        public static bool IsKeyPressed;
-        public static int LinesCleared, Score, Level = 1;
+        private Tetrominoe _nexttet;
+        private Tetrominoe _tet;
+        public int[,] DroppedtetrominoeLocationGrid = new int[23, 10];
+        public int DropTime, DropRate = 300;
+        public Stopwatch DropTimer = new Stopwatch();
+        public int[,] Grid = new int[23, 10];
+        public Stopwatch InputTimer = new Stopwatch();
+        public bool IsDropped;
+        public bool IsKeyPressed;
+        public ConsoleKeyInfo Key;
+        public int LinesCleared, Score, Level = 1;
+        public string Sqr = "■";
+        public Stopwatch Timer = new Stopwatch();
+
+        private Program()
+        {
+        }
+
+        public static Program Instance { get; } = new Program();
 
         private static void Main()
         {
             Console.OutputEncoding = Encoding.UTF8;
-            DrawBorder();
+            Instance.DrawBorder();
             Console.SetCursorPosition(4, 5);
             Console.WriteLine("Press any key");
             Console.ReadKey(true);
-            Timer.Start();
-            DropTimer.Start();
+            Instance.Timer.Start();
+            Instance.DropTimer.Start();
             Console.SetCursorPosition(25, 0);
-            Console.WriteLine("Level " + Level);
+            Console.WriteLine("Level " + Instance.Level);
             Console.SetCursorPosition(25, 1);
-            Console.WriteLine("Score " + Score);
+            Console.WriteLine("Score " + Instance.Score);
             Console.SetCursorPosition(25, 2);
-            Console.WriteLine("LinesCleared " + LinesCleared);
-            _nexttet = new Tetrominoe();
-            _tet = _nexttet;
-            _tet.Spawn();
-            _nexttet = new Tetrominoe();
+            Console.WriteLine("LinesCleared " + Instance.LinesCleared);
+            Instance._nexttet = new Tetrominoe();
+            Instance._tet = Instance._nexttet;
+            Instance._tet.Spawn();
+            Instance._nexttet = new Tetrominoe();
 
-            Update();
+            Instance.Update();
 
             Console.SetCursorPosition(0, 0);
             Console.WriteLine("Game Over \n Replay? (Y/N)");
@@ -48,23 +54,23 @@ namespace Tetris
 
             if (input == "y" || input == "Y")
             {
-                DroppedtetrominoeLocationGrid = new int[23, 10];
-                Timer = new Stopwatch();
-                DropTimer = new Stopwatch();
-                InputTimer = new Stopwatch();
-                DropRate = 300;
-                IsDropped = false;
-                IsKeyPressed = false;
-                LinesCleared = 0;
-                Score = 0;
-                Level = 1;
+                Instance.DroppedtetrominoeLocationGrid = new int[23, 10];
+                Instance.Timer = new Stopwatch();
+                Instance.DropTimer = new Stopwatch();
+                Instance.InputTimer = new Stopwatch();
+                Instance.DropRate = 300;
+                Instance.IsDropped = false;
+                Instance.IsKeyPressed = false;
+                Instance.LinesCleared = 0;
+                Instance.Score = 0;
+                Instance.Level = 1;
                 GC.Collect();
                 Console.Clear();
                 Main();
             }
         }
 
-        private static void Update()
+        private void Update()
         {
             while (true) //Update Loop
             {
@@ -97,7 +103,7 @@ namespace Tetris
             } //end Update
         }
 
-        private static void ClearBlock()
+        private void ClearBlock()
         {
             var combo = 0;
             for (var i = 0; i < 23; i++)
@@ -216,7 +222,7 @@ namespace Tetris
             DropRate = 300 - 22 * Level;
         }
 
-        private static void Input()
+        private void Input()
         {
             if (Console.KeyAvailable)
             {
@@ -264,7 +270,7 @@ namespace Tetris
             }
         }
 
-        public static void Draw()
+        public void Draw()
         {
             for (var i = 0; i < 23; ++i)
             {
@@ -284,7 +290,7 @@ namespace Tetris
             }
         }
 
-        public static void DrawBorder()
+        public void DrawBorder()
         {
             for (var lengthCount = 0; lengthCount <= 22; ++lengthCount)
             {
