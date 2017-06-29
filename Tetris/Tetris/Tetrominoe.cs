@@ -31,7 +31,7 @@ namespace Tetris
                     Console.Write("  ");
                 }
             }
-            Program.Instance.DrawBorder();
+            TetrisGame.Instance.BorderDrawer.DrawBorder();
             for (var i = 0; i < shape.GetLength(0); i++)
             {
                 for (var j = 0; j < shape.GetLength(1); j++)
@@ -39,7 +39,7 @@ namespace Tetris
                     if (shape[i, j] == 1)
                     {
                         Console.SetCursorPosition(((10 - shape.GetLength(1)) / 2 + j) * 2 + 20, i + 5);
-                        Console.Write(Program.Instance.Sqr);
+                        Console.Write(TetrisDrawer.Sqr);
                     }
                 }
             }
@@ -66,9 +66,9 @@ namespace Tetris
             {
                 for (var i = 0; i < 4; i++)
                 {
-                    Program.Instance.DroppedtetrominoeLocationGrid[Location[i][0], Location[i][1]] = 1;
+                    TetrisGame.Instance.DroppedtetrominoeLocationGrid[Location[i][0], Location[i][1]] = 1;
                 }
-                Program.Instance.IsDropped = true;
+                TetrisGame.Instance.IsDropped = true;
             }
             else
             {
@@ -194,7 +194,7 @@ namespace Tetris
                 }
                 if (Location[i][0] + 1 < 23)
                 {
-                    if (Program.Instance.DroppedtetrominoeLocationGrid[Location[i][0] + 1, Location[i][1]] == 1)
+                    if (TetrisGame.Instance.DroppedtetrominoeLocationGrid[Location[i][0] + 1, Location[i][1]] == 1)
                     {
                         return true;
                     }
@@ -232,7 +232,7 @@ namespace Tetris
                 {
                     if ((ycoords.Max() == location[i][0]) | (ycoords.Max() - 1 == location[i][0]))
                     {
-                        if (Program.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (TetrisGame.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -242,7 +242,7 @@ namespace Tetris
                 {
                     if (ycoords.Max() == location[i][0])
                     {
-                        if (Program.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (TetrisGame.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -262,7 +262,7 @@ namespace Tetris
                 {
                     return true;
                 }
-                if (Program.Instance.DroppedtetrominoeLocationGrid[Location[i][0], Location[i][1] - 1] == 1)
+                if (TetrisGame.Instance.DroppedtetrominoeLocationGrid[Location[i][0], Location[i][1] - 1] == 1)
                 {
                     return true;
                 }
@@ -299,7 +299,7 @@ namespace Tetris
                 {
                     if ((xcoords.Min() == location[i][1]) | (xcoords.Min() + 1 == location[i][1]))
                     {
-                        if (Program.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (TetrisGame.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -309,7 +309,7 @@ namespace Tetris
                 {
                     if (xcoords.Min() == location[i][1])
                     {
-                        if (Program.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (TetrisGame.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -327,7 +327,7 @@ namespace Tetris
                 {
                     return true;
                 }
-                if (Program.Instance.DroppedtetrominoeLocationGrid[Location[i][0], Location[i][1] + 1] == 1)
+                if (TetrisGame.Instance.DroppedtetrominoeLocationGrid[Location[i][0], Location[i][1] + 1] == 1)
                 {
                     return true;
                 }
@@ -364,7 +364,7 @@ namespace Tetris
                 {
                     if ((xcoords.Max() == location[i][1]) | (xcoords.Max() - 1 == location[i][1]))
                     {
-                        if (Program.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (TetrisGame.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -374,7 +374,7 @@ namespace Tetris
                 {
                     if (xcoords.Max() == location[i][1])
                     {
-                        if (Program.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
+                        if (TetrisGame.Instance.DroppedtetrominoeLocationGrid[location[i][0], location[i][1]] == 1)
                         {
                             return true;
                         }
@@ -390,14 +390,14 @@ namespace Tetris
             {
                 for (var j = 0; j < 10; j++)
                 {
-                    Program.Instance.Grid[i, j] = 0;
+                    TetrisGame.Instance.Grid[i, j] = 0;
                 }
             }
             for (var i = 0; i < 4; i++)
             {
-                Program.Instance.Grid[Location[i][0], Location[i][1]] = 1;
+                TetrisGame.Instance.Grid[Location[i][0], Location[i][1]] = 1;
             }
-            Program.Instance.Draw();
+            TetrisGame.Instance.TetrisDrawer.Draw(TetrisGame.Instance.DroppedtetrominoeLocationGrid, TetrisGame.Instance.Grid);
         }
     }
 }
