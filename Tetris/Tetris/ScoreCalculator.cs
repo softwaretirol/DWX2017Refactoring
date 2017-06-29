@@ -23,7 +23,7 @@ namespace Tetris
                 return 300 * combo * level;
             }
 
-            throw new ArgumentOutOfRangeException(nameof(combo));
+            return 0;
         }
 
         public int CalculateDropRate(int level)
