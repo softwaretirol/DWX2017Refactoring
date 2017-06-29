@@ -7,55 +7,80 @@ namespace Tetris
 {
     static class Program
     {
-
         public static string sqr = "■";
         public static int[,] grid = new int[23, 10];
         public static int[,] droppedTetrisBricksLocationGrid = new int[23, 10];
-        public static Stopwatch timer = new Stopwatch();
-        public static Stopwatch dropTimer = new Stopwatch();
-        public static Stopwatch inputTimer = new Stopwatch();
-        public static int dropTime, dropRate = 300;
-        public static bool isDropped = false;
-        static TetrisBrick tet;
-        static TetrisBrick nexttet;
-        public static ConsoleKeyInfo key;
-        public static bool isKeyPressed = false;
-        public static int linesCleared = 0, score = 0, level = 1;
+        public static bool isDropped;
+
+        private static TetrisBrick currentBrick;
+        private static TetrisBrick nextBrick;
+        private static ConsoleKeyInfo key;
+        private static bool isKeyPressed;
+        private static int linesCleared = 0, score = 0, level = 1;
+        private static Stopwatch dropTimer = new Stopwatch();
+        private static int dropTime, dropRate = 300;
 
         static void Main()
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            SetConsoleOutputEncoding();
+
             DrawBorder();
-            Console.SetCursorPosition(4, 5);
-            Console.WriteLine("Press any key");
-            Console.ReadKey(true);
-            timer.Start();
+
+            AskForKeyInput();
+
+            StartDropTimer();
+
+            WriteTitles();
+
+            StartGame();
+
+            Update();
+
+            AskForRestartGame();
+
+            ReadKeyInput();
+        }
+
+        private static void SetConsoleOutputEncoding()
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+        }
+
+        private static void StartGame()
+        {
+            currentBrick = new TetrisBrick();
+            currentBrick.Spawn();
+        }
+
+        private static void StartDropTimer()
+        {
             dropTimer.Start();
-            long time = timer.ElapsedMilliseconds;
+        }
+
+        private static void AskForRestartGame()
+        {
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("Game Over \n Replay? (Y/N)");
+        }
+
+        private static void WriteTitles()
+        {
             Console.SetCursorPosition(25, 0);
             Console.WriteLine("Level " + level);
             Console.SetCursorPosition(25, 1);
             Console.WriteLine("Score " + score);
             Console.SetCursorPosition(25, 2);
             Console.WriteLine("LinesCleared " + linesCleared);
-            nexttet = new TetrisBrick();
-            tet = nexttet;
-            tet.Spawn();
-            nexttet = new TetrisBrick();
+        }
 
-            Update();
-
-            Console.SetCursorPosition(0, 0);
-            Console.WriteLine("Game Over \n Replay? (Y/N)");
+        private static void ReadKeyInput()
+        {
             string input = Console.ReadLine();
 
             if (input == "y" || input == "Y")
             {
-                int[,] grid = new int[23, 10];
                 droppedTetrisBricksLocationGrid = new int[23, 10];
-                timer = new Stopwatch();
                 dropTimer = new Stopwatch();
-                inputTimer = new Stopwatch();
                 dropRate = 300;
                 isDropped = false;
                 isKeyPressed = false;
@@ -67,7 +92,13 @@ namespace Tetris
                 Main();
             }
             else return;
+        }
 
+        private static void AskForKeyInput()
+        {
+            Console.SetCursorPosition(4, 5);
+            Console.WriteLine("Press any key");
+            Console.ReadKey(true);
         }
 
         private static void Update()
@@ -79,13 +110,13 @@ namespace Tetris
                 {
                     dropTime = 0;
                     dropTimer.Restart();
-                    tet.Drop();
+                    currentBrick.Drop();
                 }
                 if (isDropped == true)
                 {
-                    tet = nexttet;
-                    nexttet = new TetrisBrick();
-                    tet.Spawn();
+                    nextBrick = new TetrisBrick();
+                    currentBrick = nextBrick;
+                    currentBrick.Spawn();
 
                     isDropped = false;
                 }
@@ -187,39 +218,39 @@ namespace Tetris
             else
                 isKeyPressed = false;
 
-            if (Program.key.Key == ConsoleKey.LeftArrow & !tet.IsSomethingLeft() & isKeyPressed)
+            if (Program.key.Key == ConsoleKey.LeftArrow & !currentBrick.IsSomethingLeft() & isKeyPressed)
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    tet.location[i][1] -= 1;
+                    currentBrick.location[i][1] -= 1;
                 }
-                tet.Update();
+                currentBrick.Update();
                 //    Console.Beep();
             }
-            else if (Program.key.Key == ConsoleKey.RightArrow & !tet.IsSomethingRight() & isKeyPressed)
+            else if (Program.key.Key == ConsoleKey.RightArrow & !currentBrick.IsSomethingRight() & isKeyPressed)
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    tet.location[i][1] += 1;
+                    currentBrick.location[i][1] += 1;
                 }
-                tet.Update();
+                currentBrick.Update();
             }
             if (Program.key.Key == ConsoleKey.DownArrow & isKeyPressed)
             {
-                tet.Drop();
+                currentBrick.Drop();
             }
             if (Program.key.Key == ConsoleKey.UpArrow & isKeyPressed)
             {
-                for (; tet.IsSomethingBelow() != true;)
+                for (; currentBrick.IsSomethingBelow() != true;)
                 {
-                    tet.Drop();
+                    currentBrick.Drop();
                 }
             }
             if (Program.key.Key == ConsoleKey.Spacebar & isKeyPressed)
             {
                 //rotate
-                tet.Rotate();
-                tet.Update();
+                currentBrick.Rotate();
+                currentBrick.Update();
             }
         }
 
