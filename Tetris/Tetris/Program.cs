@@ -29,45 +29,63 @@ namespace Tetris
         private static void Main()
         {
             Console.OutputEncoding = Encoding.UTF8;
+            while (true)
+            {
+                StartGame();
+
+                if (!StartAnotherGame())
+                {
+                    return;
+                }
+            }
+        }
+
+        private static bool StartAnotherGame()
+        {
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("Game Over \n Replay? (Y/N)");
+            var input = Console.ReadLine();
+
+            return input == "y" || input == "Y";
+        }
+
+        private static void StartGame()
+        {
+            Instance.DroppedtetrominoeLocationGrid = new int[23, 10];
+            Instance.Timer = new Stopwatch();
+            Instance.DropTimer = new Stopwatch();
+            Instance.InputTimer = new Stopwatch();
+            Instance.DropRate = 300;
+            Instance.IsDropped = false;
+            Instance.IsKeyPressed = false;
+            Instance.LinesCleared = 0;
+            Instance.Score = 0;
+            Instance.Level = 1;
+
             Instance.DrawBorder();
             Console.SetCursorPosition(4, 5);
             Console.WriteLine("Press any key");
             Console.ReadKey(true);
             Instance.Timer.Start();
             Instance.DropTimer.Start();
-            Console.SetCursorPosition(25, 0);
-            Console.WriteLine("Level " + Instance.Level);
-            Console.SetCursorPosition(25, 1);
-            Console.WriteLine("Score " + Instance.Score);
-            Console.SetCursorPosition(25, 2);
-            Console.WriteLine("LinesCleared " + Instance.LinesCleared);
+            OutputScoreInfo();
             Instance._nexttet = new Tetrominoe();
             Instance._tet = Instance._nexttet;
             Instance._tet.Spawn();
             Instance._nexttet = new Tetrominoe();
 
             Instance.Update();
+            Console.Clear();
+        }
 
-            Console.SetCursorPosition(0, 0);
-            Console.WriteLine("Game Over \n Replay? (Y/N)");
-            var input = Console.ReadLine();
-
-            if (input == "y" || input == "Y")
-            {
-                Instance.DroppedtetrominoeLocationGrid = new int[23, 10];
-                Instance.Timer = new Stopwatch();
-                Instance.DropTimer = new Stopwatch();
-                Instance.InputTimer = new Stopwatch();
-                Instance.DropRate = 300;
-                Instance.IsDropped = false;
-                Instance.IsKeyPressed = false;
-                Instance.LinesCleared = 0;
-                Instance.Score = 0;
-                Instance.Level = 1;
-                GC.Collect();
-                Console.Clear();
-                Main();
-            }
+        private static void OutputScoreInfo()
+        {
+            Console.SetCursorPosition(25, 0);
+            Console.WriteLine("Level " + Instance.Level);
+            Console.SetCursorPosition(25, 1);
+            Console.WriteLine("Score " + Instance.Score);
+            Console.SetCursorPosition(25, 2);
+            Console.WriteLine("LinesCleared " + Instance.LinesCleared);
         }
 
         private void Update()
@@ -100,7 +118,7 @@ namespace Tetris
 
                 Input();
                 ClearBlock();
-            } //end Update
+            } 
         }
 
         private void ClearBlock()
@@ -150,6 +168,15 @@ namespace Tetris
                     Draw();
                 }
             }
+
+            CalculateScore(combo);
+            UpdateLevel();
+            UpdateCombo(combo);
+            CalculateDropRate();
+        }
+
+        private void CalculateScore(int combo)
+        {
             if (combo == 1)
             {
                 Score += 40 * Level;
@@ -166,7 +193,28 @@ namespace Tetris
             {
                 Score += 300 * combo * Level;
             }
+        }
 
+        private void CalculateDropRate()
+        {
+            DropRate = 300 - 22 * Level;
+        }
+
+        private void UpdateCombo(int combo)
+        {
+            if (combo > 0)
+            {
+                Console.SetCursorPosition(25, 0);
+                Console.WriteLine("Level " + Level);
+                Console.SetCursorPosition(25, 1);
+                Console.WriteLine("Score " + Score);
+                Console.SetCursorPosition(25, 2);
+                Console.WriteLine("LinesCleared " + LinesCleared);
+            }
+        }
+
+        private void UpdateLevel()
+        {
             if (LinesCleared < 5)
             {
                 Level = 1;
@@ -207,19 +255,6 @@ namespace Tetris
             {
                 Level = 10;
             }
-
-
-            if (combo > 0)
-            {
-                Console.SetCursorPosition(25, 0);
-                Console.WriteLine("Level " + Level);
-                Console.SetCursorPosition(25, 1);
-                Console.WriteLine("Score " + Score);
-                Console.SetCursorPosition(25, 2);
-                Console.WriteLine("LinesCleared " + LinesCleared);
-            }
-
-            DropRate = 300 - 22 * Level;
         }
 
         private void Input()
